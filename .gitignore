@@ -1,0 +1,50 @@
+# --- Python Basics ---
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# --- Virtual Environments ---
+.env
+.venv
+env/
+venv/
+ENV/
+
+# --- Tools ---
+# PyInstaller
+*.spec
+
+# Pylint / Pyright
+.pylintnode
+.pyrightconfig.json
+.dmypy.json
+external_libs/
+
+# --- System / IDE ---
+.DS_Store
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# --- ROS 2 Specifics (If you happen to build in this dir) ---
+install/
+log/
