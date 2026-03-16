@@ -2,12 +2,12 @@ from setuptools import find_packages, setup
 
 setup(
     name="h20tui",
-    version="0.1.0",
+    version="0.1.1",
     description="A TUI for ROS 2",
     author="Can Ozaydin",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
-    url="https://github.com/ozaydincan/ros2tui",
+    url="https://github.com/ozaydincan/h20tui.git",
     packages=find_packages(),
     install_requires=[
         "textual>=0.40.0",
