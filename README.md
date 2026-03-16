@@ -51,6 +51,4 @@ If ROS2 is sourced in your workspace
 h20tui
 ```
 
-```
 
-```
