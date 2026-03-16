@@ -1,13 +1,17 @@
+"""
+Setup configuration for the h20tui package.
+"""
+
 from setuptools import find_packages, setup
 
 setup(
     name="h20tui",
-    version="0.1.1",
-    description="A TUI for ROS 2",
+    version="0.1.2",
+    description="A tiling window manager TUI for ROS 2 Humble",
     author="Can Ozaydin",
-    long_description=open("README.md").read(),
+    long_description=open("README.md", encoding="utf-8").read(),
     long_description_content_type="text/markdown",
-    url="https://github.com/ozaydincan/h20tui.git",
+    url="https://github.com/ozaydincan/ros2tui",
     packages=find_packages(),
     install_requires=[
         "textual>=0.40.0",
@@ -15,14 +19,17 @@ setup(
     ],
     entry_points={
         "console_scripts": [
-            # This links the terminal command 'ros2tui' to your main() function
-            "ros2tui = ros2tui.main:main",
+            # Maps the terminal command 'h20tui' to the main() function
+            # inside ros2tui/main.py
+            "h20tui = ros2tui.main:main",
         ],
     },
     classifiers=[
         "Programming Language :: Python :: 3",
         "License :: OSI Approved :: MIT License",
         "Operating System :: POSIX :: Linux",
+        "Topic :: Software Development :: User Interfaces",
     ],
     python_requires=">=3.10",
+    include_package_data=True,
 )
