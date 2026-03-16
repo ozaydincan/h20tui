@@ -1,4 +1,4 @@
-# ROS 2 Window Manager TUI (ros2tui)
+# ROS 2 Window Manager TUI (h20tui)
 
 A high-performance, asynchronous Text User Interface (TUI) designed for **ROS 2 Humble**. This tool transforms your terminal into a tiling window manager specifically tuned for robotics development. Navigate your workspace, monitor topics, and manage multiple nodes side-by-side using pure keyboard motions.
 
@@ -27,17 +27,17 @@ A high-performance, asynchronous Text User Interface (TUI) designed for **ROS 2 
 To install in "editable" mode so that changes to the code take effect immediately:
 
 ```bash
-git clone [https://github.com/YOUR_USERNAME/ros2tui.git](https://github.com/YOUR_USERNAME/ros2tui.git)
-cd ros2tui
+git clone git@github.com:ozaydincan/h20tui.git 
+cd h20tui
 pip install -e .
 ```
 
 ### 2. From Pip (Recommended)
 
-You can install **ros2tui** directly from PyPI:
+You can install **h20tui** directly from PyPI:
 
 ```bash
-pip install ros2tui
+pip install h20tui
 source /opt/ros/humble/setup.bash
 # (Optional) Source your workspace
 source ~/your_ws/install/setup.bash
@@ -48,8 +48,7 @@ source ~/your_ws/install/setup.bash
 If ROS2 is sourced in your workspace
 
 ```bash
-**ros2tui**
-
+h20tui
 ```
 
 ```
