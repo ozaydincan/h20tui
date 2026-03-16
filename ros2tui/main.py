@@ -7,12 +7,13 @@ Entry point into the main app.
 import os
 import sys
 
-from ros2_entry import build_ros_caches, fuzzy_match
 from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.containers import Horizontal, Vertical
 from textual.widgets import Footer, Header, Input, Tree
-from ui_components import ProcessPane, VimTree
+
+from ros2tui.ros2_entry import build_ros_caches, fuzzy_match
+from ros2tui.ui_components import ProcessPane, VimTree
 
 if "ROS_DISTRO" not in os.environ:
     print("Error: ROS 2 environment not sourced.")
