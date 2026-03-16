@@ -6,7 +6,7 @@ from setuptools import find_packages, setup
 
 setup(
     name="h20tui",
-    version="0.1.3",
+    version="0.1.4",
     description="A tiling window manager TUI for ROS 2 Humble",
     author="Can Ozaydin",
     long_description=open("README.md", encoding="utf-8").read(),
