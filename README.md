@@ -48,7 +48,7 @@ source ~/your_ws/install/setup.bash
 If ROS2 is sourced in your workspace
 
 ```bash
-ros2tui
+h20tui
 ```
 
 
