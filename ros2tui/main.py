@@ -12,8 +12,8 @@ from textual.binding import Binding
 from textual.containers import Horizontal, Vertical
 from textual.widgets import Footer, Header, Input, Tree
 
-from .ros2_entry import build_ros_caches, fuzzy_match
-from .ui_components import ProcessPane, VimTree
+from ros2tui.ros2_entry import build_ros_caches, fuzzy_match
+from ros2tui.ui_components import ProcessPane, VimTree
 
 if "ROS_DISTRO" not in os.environ:
     print("Error: ROS 2 environment not sourced.")
@@ -211,6 +211,15 @@ class ROS2TUI(App):
                     cmd_node.add_leaf("<base command>", data=f"ros2 {cmd} --help")
 
 
-if __name__ == "__main__":
+"""
+Entry point of the app
+"""
+
+
+def main() -> None:
     app = ROS2TUI()
     app.run()
+
+
+if __name__ == "__main__":
+    main()
