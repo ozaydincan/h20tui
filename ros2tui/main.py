@@ -211,12 +211,11 @@ class ROS2TUI(App):
                     cmd_node.add_leaf("<base command>", data=f"ros2 {cmd} --help")
 
 
-"""
-Entry point of the app
-"""
-
-
 def main() -> None:
+    """
+    Entry point of the app
+    """
+
     app = ROS2TUI()
     app.run()
 
