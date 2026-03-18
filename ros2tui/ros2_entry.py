@@ -2,6 +2,7 @@
 Handles the data and the ROS 2 logic
 """
 
+import asyncio
 import os
 
 from ament_index_python.packages import (get_package_share_directory,
@@ -69,6 +70,34 @@ def _cache_cli_commands(cli_cache: dict) -> None:
     except Exception:  # pylint: disable=broad-exception-caught
         pass
 
+
+async def get_active_topics() -> list[str]:
+    """
+    Get the active topic names running
+    """
+    process = await asyncio.create_subprocess_shell(
+        "ros2 topic list",
+        stdout=asyncio.subprocess.PIPE,
+        stderr=asyncio.subprocess.PIPE,
+    )
+    topics, _err = await process.communicate()
+
+    if process.returncode == 0:
+        return [line.strip() for line in topics.decode().split("\n") if line.strip()]
+    return ["Topic name parsing failed"]
+
+async def get_workspace() -> list[str]:
+    """Get the built and unbuilt packages in the ws"""
+    process = await asyncio.create_subprocess_shell(
+                "colcon list --names-only",
+                stdout=asyncio.subprocess.PIPE,
+                stderr=asyncio.subprocess.PIPE
+            )
+    stdout, _ = await process.communicate()
+            
+    if process.returncode == 0:
+        return [line.strip() for line in stdout.decode().split('\n') if line.strip()]
+    return ["Problem getting packages"]
 
 def build_ros_caches() -> tuple[dict, dict, dict]:
     """Scans the ROS 2 environment and returns run, launch, and cli caches."""

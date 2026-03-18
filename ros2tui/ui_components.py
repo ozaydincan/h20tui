@@ -62,6 +62,7 @@ class ProcessPane(Vertical, can_focus=True):
             self.kill_process()
 
         self.last_command = cmd
+        ws_root = os.getcwd()
         self.query_one(Label).update(f"Running: {cmd}")
         log = self.query_one(VimLog)
         log.clear()
@@ -72,6 +73,7 @@ class ProcessPane(Vertical, can_focus=True):
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,
             preexec_fn=os.setsid,
+            cwd=ws_root,
         )
 
         async def read_stream(stream, is_error=False):
