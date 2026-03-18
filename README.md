@@ -30,6 +30,7 @@ To install in "editable" mode so that changes to the code take effect immediatel
 git clone git@github.com:ozaydincan/h20tui.git 
 cd h20tui
 pip install -e .
+ros2tui
 ```
 
 ### 2. From Pip (Recommended)
@@ -48,7 +49,7 @@ source ~/your_ws/install/setup.bash
 If ROS2 is sourced in your workspace
 
 ```bash
-h20tui
+ros2tui
 ```
 
 

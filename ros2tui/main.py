@@ -10,151 +10,18 @@ import sys
 
 from textual.app import App, ComposeResult
 from textual.binding import Binding
-from textual.containers import Grid, Horizontal, Vertical, VerticalScroll
-from textual.screen import ModalScreen
-from textual.suggester import SuggestFromList
-from textual.widgets import (Button, Checkbox, Footer, Header, Input, Label,
-                             Select, Tree)
+from textual.containers import Horizontal, Vertical
+from textual.widgets import Footer, Header, Input, Tree
 
 from ros2tui.ros2_entry import (build_ros_caches, fuzzy_match,
                                 get_active_topics, get_workspace)
-from ros2tui.ui_components import ProcessPane, VimTree
+from ros2tui.ui_components import ColconMenu, ProcessPane, VimTree
 
 if "ROS_DISTRO" not in os.environ:
     print("Error: ROS 2 environment not sourced.")
     sys.exit(1)
 if "TMUX" in os.environ:
     os.environ["COLORTERM"] = "truecolor"
-
-
-class ColconMenu(ModalScreen[str]):
-    """A pop-up menu for constructing complex colcon commands."""
-
-    def __init__(self, workspace_packages: list[str], **kwargs) -> None:
-        super().__init__(**kwargs)
-        self.workspace_packages = workspace_packages
-        self.pkg_suggester = SuggestFromList(
-            self.workspace_packages, case_sensitive=False
-        )
-
-    def compose(self) -> ComposeResult:
-        verbs = [
-            (v, v) for v in ["build", "test", "test-result", "list", "graph", "info"]
-        ]
-        build_types = [
-            ("None (Default)", ""),
-            ("Release", "Release"),
-            ("Debug", "Debug"),
-            ("RelWithDebInfo", "RelWithDebInfo"),
-        ]
-
-        yield Grid(
-            Label("Colcon Commands", id="colcon_title"),
-            VerticalScroll(
-                Label("Verb:"),
-                Select(verbs, value="build", id="colcon_verb"),
-                Label("Package Selection (space separated):"),
-                Input(
-                    placeholder="--packages-select pkg1 pkg2...",
-                    id="packages_select",
-                    suggester=self.pkg_suggester,
-                ),
-                Input(
-                    placeholder="--packages-up-to pkg1 pkg2...",
-                    id="packages_up_to",
-                    suggester=self.pkg_suggester,
-                ),
-                Label("Common Build Flags:"),
-                Horizontal(
-                    Checkbox("Symlink Install", id="symlink_install", value=True),
-                    Checkbox("Continue on Error", id="continue_on_error"),
-                    Checkbox("CMake Clean Cache", id="cmake_clean"),
-                    id="checkbox_row",
-                ),
-                Label("Build Configuration:"),
-                Horizontal(
-                    Vertical(
-                        Label("Parallel Workers:"),
-                        Input(
-                            placeholder="e.g. 4 or $(nproc)",
-                            id="parallel_workers",
-                        ),
-                        classes="config_column",
-                    ),
-                    Vertical(
-                        Label("CMake Build Type:"),
-                        Select(build_types, value="", id="cmake_build_type"),
-                        classes="config_column",
-                    ),
-                    id="config_row",
-                ),
-                Label("Additional CMake Args:"),
-                Input(placeholder="-DBUILD_TESTING=OFF ...", id="cmake_args"),
-                Label("Extra Colcon Arguments:"),
-                Input(placeholder="Any other flags...", id="extra_args"),
-                Label("Post-Build Actions:"),
-                Checkbox(
-                    "Source workspace after build", id="source_workspace", value=True
-                ),
-                Horizontal(
-                    Button("Run Command", variant="success", id="run_colcon"),
-                    Button("Cancel", variant="error", id="cancel_colcon"),
-                    classes="colcon_buttons",
-                ),
-            ),
-            id="colcon_dialog",
-        )
-
-    def on_button_pressed(self, event: Button.Pressed) -> None:
-        if event.button.id == "cancel_colcon":
-            self.dismiss(None)
-
-        elif event.button.id == "run_colcon":
-            verb = self.query_one("#colcon_verb", Select).value
-            cmd = f"colcon {verb}"
-
-            pkg_sel = self.query_one("#packages_select", Input).value.strip()
-            if pkg_sel:
-                cmd += f" --packages-select {pkg_sel}"
-
-            pkg_up_to = self.query_one("#packages_up_to", Input).value.strip()
-            if pkg_up_to:
-                cmd += f" --packages-up-to {pkg_up_to}"
-
-            if verb in ["build", "test"]:
-                if self.query_one("#symlink_install", Checkbox).value:
-                    cmd += " --symlink-install"
-                if self.query_one("#continue_on_error", Checkbox).value:
-                    cmd += " --continue-on-error"
-                if self.query_one("#cmake_clean", Checkbox).value:
-                    cmd += " --cmake-clean-cache"
-
-            workers = self.query_one("#parallel_workers", Input).value.strip()
-            if workers:
-                cmd += f" --parallel-workers {workers}"
-
-            cmake_args_list = []
-
-            build_type = self.query_one("#cmake_build_type", Select).value
-            if build_type and build_type != Select.BLANK:
-                cmake_args_list.append(f"-DCMAKE_BUILD_TYPE={build_type}")
-
-            additional_cmake = self.query_one("#cmake_args", Input).value.strip()
-            if additional_cmake:
-                cmake_args_list.append(additional_cmake)
-
-            if cmake_args_list:
-                cmd += " --cmake-args " + " ".join(cmake_args_list)
-
-            extra = self.query_one("#extra_args", Input).value.strip()
-            if extra:
-                cmd += f" {extra}"
-
-            if self.query_one("#source_workspace", Checkbox).value:
-                shell_name = os.path.basename(os.environ.get("SHELL", "bash"))
-                cmd += f" && source install/setup.{shell_name}"
-
-            self.dismiss(cmd)
 
 
 class ROS2TUI(App):
@@ -164,13 +31,15 @@ class ROS2TUI(App):
     #main_container { height: 100%; }
     #sidebar { width: 30%; height: 100%; border-right: solid green; background: $surface; }
     #sidebar.hidden { display: none; }
-    Input { dock: top; width: 100%; margin-bottom: 1; }
+    /* CHANGE: Target the specific search bar ID instead of all Inputs */
+    #search_bar { dock: top; width: 100%; margin-bottom: 1; }
+    /* NEW: Add slight spacing for inputs inside the colcon menu */
+    #colcon_dialog Input { margin-bottom: 1; }
     #command_tree { width: 100%; height: 100%; }
     #command_tree:focus { border: double green; background: $surface-lighten-3; }
     #workspace { width: 1fr; height: 100%; layout: horizontal; }
     ProcessPane { width: 1fr; height: 100%; border: solid darkgray; background: $panel; }
-    ProcessPane.active-pane { border: double cyan; }
-    .pane-title { dock: top; width: 100%; background: $surface-darken-3; color: $text; text-align: center; text-style: bold; }
+    ProcessPane.active-pane { border: double cyan; }    .pane-title { dock: top; width: 100%; background: $surface-darken-3; color: $text; text-align: center; text-style: bold; }
 ColconMenu {
         align: center middle;
     }
@@ -236,7 +105,7 @@ ColconMenu {
     def __init__(self) -> None:
         """Initialize caches and window state."""
         super().__init__()
-        self.active_pane: ProcessPane | None = None
+        self.active_pane: ProcessPane = ProcessPane()
         self.run_cache: dict[str, list[str]] = {}
         self.launch_cache: dict[str, list[str]] = {}
         self.cli_cache: dict[str, list[str]] = {}
@@ -284,6 +153,8 @@ ColconMenu {
             )
 
     def action_colcon_menu(self) -> None:
+        """Colcon pop-up menu with build flags"""
+
         def execute_colcon(constructed_command: str | None) -> None:
             if not constructed_command:
                 return
