@@ -95,7 +95,7 @@ ColconMenu {
         Binding("ctrl+l", "pane_right", "Right Pane"),
         Binding("ctrl+j", "pane_right", show=False),
         Binding("ctrl+k", "pane_left", show=False),
-        Binding("ctrl+r", "refresh_topics", "Fetch Topics"),
+        Binding("ctrl+r", "refresh_workspace", "Get New Workspace Status"),
         ("f", "focus_search", "Search"),
         ("K", "kill_process", "Kill Active"),
         ("R", "restart_process", "Restart Active"),
